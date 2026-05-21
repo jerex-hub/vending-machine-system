@@ -13,6 +13,8 @@ void retainMoney() {
     dummy = dummy - 1.0;
 }
 
+//comment from shane hehe
+
 typedef struct product{
     int storeId;
     char name[NAME_LEN];

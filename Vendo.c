@@ -32,8 +32,18 @@ int main() {
 
     while (1) {
 
-        printf("\n[   GRAB N GO VENDING   ]   \n");
-        printf("1. View All Stores & Products\n");
+        printf("\n");
+        for(int i = 0; i <= 27; i++){
+            printf("*");
+        }
+        printf("\n[   RICO VENDING MACHINE   ]   \n");
+
+        for(int i = 0; i <= 27; i++){
+            printf("*");
+        }
+        
+        printf("\n");
+        printf("\n1. View All Stores & Products\n");
         printf("2. Buy Product\n");
         printf("3. View Balance\n");
         printf("4. View My Orders\n");

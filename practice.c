@@ -177,63 +177,68 @@ void viewAndBuyProducts() {
             maxItemsInAnyStore = storeCounts[i];
         }
     }
+    //code
 
-    // Label used to refresh the store selection step
-store_select:
-    printf("===================================================================================================\n");
-    printf("                                         VENDING STORE BOARD                                     \n");
-    printf("===================================================================================================\n");
-    printf("%-24s%-24s%-24s%-24s\n", "[ STORE 1: DRINKS ]", "[ STORE 2: FRUITS ]", "[ STORE 3: MEALS ]", "[ STORE 4: DESSERTS ]");
-    printf("---------------------------------------------------------------------------------------------------\n");
+    const char *storeNames[MAX_STORES] = {
+        "DRINKS", "FRUITS", "MEALS", "DESSERTS"
+    };
 
-    for (int row = 0; row < maxItemsInAnyStore; row++) {
-        for (int store = 1; store <= MAX_STORES; store++) {
-            int currentStoreMatchIndex = 0;
-            int foundItemIndex = -1;
-            
-            for (int i = 0; i < count; i++) {
-                if (list[i].storeId == store) {
-                    if (currentStoreMatchIndex == row) {
-                        foundItemIndex = i;
-                        break;
-                    }
-                    currentStoreMatchIndex++;
-                }
-            }
+    int targetStore = -1;
 
-            if (foundItemIndex != -1) {
-                printf("%-10s P%-6.2f (%02d)    ", 
-                       list[foundItemIndex].name, 
-                       list[foundItemIndex].price, 
-                       list[foundItemIndex].stock);
-            } else {
-                printf("%-24s", ""); 
-            }
+    // Menu to select the store
+    while (1) {
+        printf("============================================\n");
+        printf("             VENDING STORE MENU             \n");
+        printf("============================================\n");
+        for (int i = 0; i < MAX_STORES; i++) {
+            printf("  [%d] Store %d: %s\n", i + 1, i + 1, storeNames[i]);
         }
-        printf("\n");
-    }
-    printf("===================================================================================================\n");
+        printf("  [0] Go BACK to Main Menu\n");
+        printf("--------------------------------------------\n");
+        printf(" Enter Store Number (0-4): ");
 
-    int targetStore, qty;
+        if (scanf("%d", &targetStore) != 1) {
+            while (getchar() != '\n');
+            printf("Invalid input. Use numbers.\n\n");
+            continue;
+        }
+
+        if (targetStore == 0) {
+            free(list);
+            return; 
+        }
+
+        if (targetStore < 1 || targetStore > MAX_STORES) {
+            printf("Invalid Store Choice. Try again.\n\n");
+            continue;
+        }
+
+        break; 
+    }
+
+    // Inside the Selected Store View
+    printf("\n============================================\n");
+    printf("         WELCOME TO STORE %d: %s         \n", targetStore, storeNames[targetStore - 1]);
+    printf("============================================\n");
+    printf("%-15s %-12s %-8s\n", "PRODUCT NAME", "PRICE", "STOCK");
+    printf("--------------------------------------------\n");
+
+    int itemsInStore = 0;
+    for (int i = 0; i < count; i++) {
+        if (list[i].storeId == targetStore) {
+            printf("%-15s P%-11.2f (%02d)\n", list[i].name, list[i].price, list[i].stock);
+            itemsInStore++;
+        }
+    }
+
+    if (itemsInStore == 0) {
+        printf(" (This store is currently out of stock)\n");
+    }
+    printf("============================================\n");
+
     char targetItem[NAME_LEN];
+    int qty;
 
-    printf("\n Enter Store Number (1-4) to select, or '0' to go BACK to Main Menu: ");
-    if (scanf("%d", &targetStore) != 1) {
-        while (getchar() != '\n');
-        goto store_select;
-    }
-    
-    if (targetStore == 0) {
-        free(list);
-        return; // Exits function to immediately hitting main menu's goto loop
-    }
-    
-    if (targetStore < 1 || targetStore > MAX_STORES) {
-        printf(" Invalid Store Choice.\n\n");
-        goto store_select;
-    }
-
-    // Label used to refresh item input details if data entries break rules
 buy_prompt:
     printf("\n--- Purchasing from Store %d ---\n", targetStore);
     printf("Enter Product Name (or type 'back' to change stores): ");
@@ -320,7 +325,7 @@ buy_prompt:
     free(list); 
 }
 
-void viewInventory() {
+void viewInventory() {  
     FILE *ifp = fopen("inventory.txt", "r");
     printf("============================================\n");
     printf("              STUDENT INVENTORY           \n");

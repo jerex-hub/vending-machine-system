@@ -141,41 +141,14 @@ void buyFromStore() {
     }
     fclose(pfp);
 
-    printf("--- SELECT A STORE ---\n");
-    printf("Store 1 - Drinks\n");
-    printf("Store 2 - Fruits\n");
-    printf("Store 3 - Meals\n");
-    printf("Store 4 - Desserts\n");
-    printf("Enter Store (1-4): ");
+    printf("Enter Store Number (1-4): ");
     scanf("%d", &targetStore);
 
-    if(targetStore < 1 || targetStore > 4){
-        printf("Invalid Store Choice.\n");
-        return;
-    }
-
-    printf("---Available Product in Store %d ---\n\n", targetStore);
-    int itemsInStore = 0;
-    for(int i = 0; i < count; i++){
-        if(list[i].storeId == targetStore){
-            printf("- %-12s | Price: P%-6.2f | Stock: %d\n", list[i].name, list[i].price, list[i].stock);
-            itemsInStore++;
-        }
-    }
-    if(itemsInStore == 0){
-        printf("No products available in this store.\n");
-        return;
-    }
-
-    printf("\nEnter Product Name to buy: ");
+    printf("Enter Product Name to buy: ");
     scanf("%s", targetItem);
 
     printf("Enter Quantity: ");
     scanf("%d", &qty);
-
-    if(qty <= 0){
-        printf("Invalid quantity.\n");
-    }
 
     int found = 0;
     for (int i = 0; i < count; i++) {

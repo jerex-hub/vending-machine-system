@@ -187,6 +187,7 @@ void viewAndBuyProducts() {
 
     // Menu to select the store
     while (1) {
+        store_select:
         printf("============================================\n");
         printf("             VENDING STORE MENU             \n");
         printf("============================================\n");
@@ -246,7 +247,6 @@ buy_prompt:
 
     if (strcmp(targetItem, "back") == 0) {
         printf("\n");
-        goto store_select; // Jump back to store select section
     }
 
     printf("Enter Quantity (or type '0' to change stores): ");

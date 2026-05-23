@@ -22,7 +22,6 @@ int main() {
     initializeFiles();
     int choice;
  
-    // Label for restarting the main menu loop
 menu_start:
     printf("\n============================================\n");
     printf("            RICO VENDING MACHINE          \n");
@@ -34,7 +33,7 @@ menu_start:
     printf(" Choice: ");
     
     if (scanf("%d", &choice) != 1) {
-        while (getchar() != '\n'); // Clear input buffer
+        while (getchar() != '\n'); 
         goto menu_start;
     }
     printf("\n");

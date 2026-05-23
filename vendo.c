@@ -34,7 +34,7 @@ int main() {
 menu_start:
     system("cls"); 
     printf("\n============================================\n");
-    printf("            R VENDING MACHINE          \n");
+    printf("            RY N JAR CANTEEN                  \n");
     printf("============================================\n");
     printf("  [1] View & Buy Products\n");
     printf("  [2] Inventory (Money & Orders)\n");
@@ -57,7 +57,7 @@ menu_start:
             goto menu_start; 
         case 3: 
             system("cls");
-            printf("Thank you for using Rico Vending Machine! \n"); 
+            printf("Thank you for using RY N JAR CANTEEN! \n"); 
             return 0;
         default: 
             printf("Invalid option. Please try again.\n");
@@ -77,7 +77,7 @@ void initializeFiles() {
             if (i == 0) {
                 fprintf(fp, "1 Coke 20.0 10\n1 Sprite 20.0 10\n1 Beer 40.0 8\n1 Juice 15.0 10\n1 RedHorse 50.0 5\n");
             } else if (i == 1) {
-                fprintf(fp, "2 Apple 10.0 10\n2 Orange 10.0 8\n2 Ates 15.0 5\n2 Mango 12.0 7\n2 Avocado 15.0 6\n");
+                fprintf(fp, "2 Apple 10.0 10\n2 Orange 10.0 8\n2 Banana 15.0 5\n2 Mango 12.0 7\n2 Avocado 15.0 6\n");
             } else if (i == 2) {
                 fprintf(fp, "3 ChickenJoy 25.0 10\n3 Hotdog 10.0 20\n3 Burger 30.0 20\n3 Spaghetti 10.0 20\n3 Pizza 35.0 5\n");
             } else if (i == 3) {

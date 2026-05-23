@@ -1,5 +1,0 @@
-3 ChickenJoy 25.00 10
-3 Hotdog 10.00 20
-3 Burger 30.00 20
-3 Spaghetti 10.00 12
-3 Pizza 35.00 4

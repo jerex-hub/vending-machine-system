@@ -1,5 +1,0 @@
-2 Apple 10.0 10
-2 Orange 10.0 8
-2 Ates 15.0 5
-2 Mango 12.0 7
-2 Avocado 15.0 6

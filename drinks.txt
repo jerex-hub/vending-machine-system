@@ -1,5 +1,0 @@
-1 Coke 20.0 10
-1 Sprite 20.0 10
-1 Beer 40.0 8
-1 Juice 15.0 10
-1 RedHorse 50.0 5

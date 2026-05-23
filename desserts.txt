@@ -1,0 +1,5 @@
+4 Cake 50.00 4
+4 IceCream 20.00 10
+4 Cookie 15.00 15
+4 MangoFloat 20.00 12
+4 Chocolate 30.00 0

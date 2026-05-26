@@ -12,7 +12,6 @@ typedef struct product {
     int stock;
 } Product;
 
-// Global array mapping store indexes to filenames
 const char *storeFiles[MAX_STORES] = {
     "drinks.txt", "fruits.txt", "meals.txt", "desserts.txt"
 };
@@ -33,7 +32,7 @@ int main() {
  
 menu_start:
     system("cls"); 
-    printf("\n============================================\n");
+    printf("============================================\n");
     printf("            RY N JAR CANTEEN                  \n");
     printf("============================================\n");
     printf("  [1] View & Buy Products\n");
@@ -163,7 +162,7 @@ void viewAndBuyProducts() {
         store_select:
         system("cls"); 
         printf("============================================\n");
-        printf("             VENDING STORE MENU             \n");
+        printf("                 STORE MENU                  \n");
         printf("============================================\n");
         for (int i = 0; i < MAX_STORES; i++) {
             printf("  [%d] Store %d: %s\n", i + 1, i + 1, storeNames[i]);
@@ -223,10 +222,14 @@ void viewAndBuyProducts() {
     }
     fclose(fp);
 
+    float currentMoney = getStudentMoney();
+
     system("cls"); 
     printf("\n============================================\n");
     printf("         WELCOME TO STORE %d: %s         \n", targetStore, storeNames[targetStore - 1]);
     printf("============================================\n");
+    printf("CURRENT FUNDS: P%.2f\n", currentMoney);
+    printf("--------------------------------------------\n");
     printf("%-5s %-15s %-12s %-8s\n", "NO.", "PRODUCT NAME", "PRICE", "STOCK");
     printf("--------------------------------------------\n");
 
@@ -378,6 +381,7 @@ void viewInventory() {
     fclose(ifp);
 
     int backChoice;
+
 inventory_back:
     printf("\n [0] Go back to Menu: ");
     if (scanf("%d", &backChoice) != 1 || backChoice != 0) {

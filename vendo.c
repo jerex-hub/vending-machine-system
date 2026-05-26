@@ -273,6 +273,14 @@ buy_prompt:
         printf(" Invalid Product Number. Try again.\n");
         goto buy_prompt;
     }
+    
+    printf("Are you sure you want to buy %s? (y/n): ", list[itemNum - 1].name);
+    char confirm;
+    while (getchar() != '\n');
+    if (scanf("%c", &confirm) != 1 || (confirm != 'y' && confirm != 'Y')) {
+        printf(" Purchase cancelled.\n");
+        goto buy_prompt;
+    }
 
     // Match selected array item based on index
     int selectedIdx = itemNum - 1;

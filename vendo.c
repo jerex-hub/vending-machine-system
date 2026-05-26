@@ -295,6 +295,11 @@ buy_prompt:
         printf(" Invalid Product Number. Try again.\n");
         goto buy_prompt;
     }
+
+    if (list[itemNum - 1].stock == 0) {
+        printf(" Sorry, %s is out of stock. Please choose another product.\n", list[itemNum - 1].name);
+        goto buy_prompt;
+    }
     
     int selectedIdx = itemNum - 1;
 

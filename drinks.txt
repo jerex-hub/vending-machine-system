@@ -1,4 +1,4 @@
-1 Coke 20.00 10
+1 Coke 20.00 4
 1 Sprite 20.00 10
 1 Beer 40.00 4
 1 Juice 15.00 10

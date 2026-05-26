@@ -23,7 +23,7 @@ const char *storeNames[MAX_STORES] = {
 void initializeFiles();
 void viewAndBuyProducts();
 float getStudentMoney();
-void updateInventory(float newBalance, const char *newOrderToken);
+void updateInventory(float newBalance, const char *itemName, int qty);
 void viewInventory();
 
 int main() {
@@ -117,7 +117,7 @@ float getStudentMoney() {
     return money;
 }
 
-void updateInventory(float newBalance, const char *newOrderToken) {
+void updateInventory(float newBalance, const char *itemName, int qty) {
     FILE *ifp = fopen("inventory.txt", "r");
     if (ifp == NULL) return;
 
@@ -127,6 +127,8 @@ void updateInventory(float newBalance, const char *newOrderToken) {
 
     float dummy;
     fseek(ifp, 0, SEEK_SET);
+    
+    // Read current items out of the inventory file
     if (fscanf(ifp, "%f", &dummy) == 1) {
         while (fscanf(ifp, "%s", tempOrder) != EOF) {
             savedOrders = realloc(savedOrders, (orderCount + 1) * sizeof(char *));
@@ -137,19 +139,43 @@ void updateInventory(float newBalance, const char *newOrderToken) {
     }
     fclose(ifp);
 
+    int foundIdx = -1;
+    // Look through current list to check if item is already owned
+    if (itemName != NULL) {
+        for (int i = 0; i < orderCount; i++) {
+            char parsedName[100];
+            int existingQty = 0;
+            // Parse formats like "Coke(x10)" safely
+            if (sscanf(savedOrders[i], "%[^(](x%d)", parsedName, &existingQty) == 2) {
+                if (strcmp(parsedName, itemName) == 0) {
+                    foundIdx = i;
+                    qty += existingQty; // Stack quantities together
+                    break;
+                }
+            }
+        }
+    }
+
+    // Rewrite inventory file with updated records
     ifp = fopen("inventory.txt", "w");
     if (ifp == NULL) return;
 
     fprintf(ifp, "%.2f\n", newBalance);
 
     for (int i = 0; i < orderCount; i++) {
-        fprintf(ifp, "%s\n", savedOrders[i]);
+        if (i == foundIdx) {
+            // Write the newly aggregated value instead
+            fprintf(ifp, "%s(x%d)\n", itemName, qty);
+        } else {
+            fprintf(ifp, "%s\n", savedOrders[i]);
+        }
         free(savedOrders[i]);
     }
     free(savedOrders);
 
-    if (newOrderToken != NULL) {
-        fprintf(ifp, "%s\n", newOrderToken);
+    // If it's a completely brand new item choice, append it cleanly to the end
+    if (itemName != NULL && foundIdx == -1) {
+        fprintf(ifp, "%s(x%d)\n", itemName, qty);
     }
 
     fclose(ifp);
@@ -158,42 +184,40 @@ void updateInventory(float newBalance, const char *newOrderToken) {
 void viewAndBuyProducts() {
     int targetStore = -1;
 
-    while (1) {
-        store_select:
-        system("cls"); 
-        printf("============================================\n");
-        printf("                 STORE MENU                  \n");
-        printf("============================================\n");
-        for (int i = 0; i < MAX_STORES; i++) {
-            printf("  [%d] Store %d: %s\n", i + 1, i + 1, storeNames[i]);
-        }
-        printf("  [0] Go BACK to Main Menu\n");
-        printf("--------------------------------------------\n");
-        printf(" Enter Store Number (0-4): ");
+store_select:
+    system("cls"); 
+    printf("============================================\n");
+    printf("                 STORE MENU                  \n");
+    printf("============================================\n");
+    for (int i = 0; i < MAX_STORES; i++) {
+        printf("  [%d] Store %d: %s\n", i + 1, i + 1, storeNames[i]);
+    }
+    printf("  [0] Go BACK to Main Menu\n");
+    printf("--------------------------------------------\n");
+    printf(" Enter Store Number (0-4): ");
 
-        if (scanf("%d", &targetStore) != 1) {
-            while (getchar() != '\n');
-            printf("Invalid input. Use numbers.\n");
-            printf("Press Enter to continue...");
-            getchar();
-            continue;
-        }
-
-        if (targetStore == 0) {
-            return; 
-        }
-
-        if (targetStore < 1 || targetStore > MAX_STORES) {
-            printf("Invalid Store Choice. Try again.\n");
-            printf("Press Enter to continue...");
-            while (getchar() != '\n');
-            getchar();
-            continue;
-        }
-
-        break; 
+    if (scanf("%d", &targetStore) != 1) {
+        while (getchar() != '\n');
+        printf("Invalid input. Use numbers.\n");
+        printf("Press Enter to continue...");
+        getchar();
+        goto store_select;
     }
 
+    if (targetStore == 0) {
+        return; 
+    }
+
+    if (targetStore < 1 || targetStore > MAX_STORES) {
+        printf("Invalid Store Choice. Try again.\n");
+        printf("Press Enter to continue...");
+        while (getchar() != '\n');
+        getchar();
+        goto store_select;
+    }
+
+// Loop tag for staying inside the exact same store after a purchase loop fires
+show_store_inventory: ;
     const char *selectedFile = storeFiles[targetStore - 1];
     FILE *fp = fopen(selectedFile, "r");
     if (fp == NULL) {
@@ -237,7 +261,6 @@ void viewAndBuyProducts() {
         printf(" (This store is currently out of stock)\n");
     } else {
         for (int i = 0; i < count; i++) {
-            // Displays a item selection number starting from 1
             printf(" [%d]  %-15s P%-11.2f (%02d)\n", i + 1, list[i].name, list[i].price, list[i].stock);
         }
     }
@@ -268,21 +291,11 @@ buy_prompt:
         goto store_select;
     }
 
-    // Check if chosen menu item number is valid within array bounds
     if (itemNum < 1 || itemNum > count) {
         printf(" Invalid Product Number. Try again.\n");
         goto buy_prompt;
     }
     
-    printf("Are you sure you want to buy %s? (y/n): ", list[itemNum - 1].name);
-    char confirm;
-    while (getchar() != '\n');
-    if (scanf("%c", &confirm) != 1 || (confirm != 'y' && confirm != 'Y')) {
-        printf(" Purchase cancelled.\n");
-        goto buy_prompt;
-    }
-
-    // Match selected array item based on index
     int selectedIdx = itemNum - 1;
 
     printf("Enter Quantity (or type '0' to change stores): ");
@@ -330,12 +343,11 @@ buy_prompt:
         }
         fclose(fp);
 
-        char newOrder[100];
-        sprintf(newOrder, "%s(x%d)(Store%d)", list[selectedIdx].name, qty, targetStore);
-        updateInventory(studentMoney, newOrder);
+        // Updated signature passing only clean details to inventory stack logic
+        updateInventory(studentMoney, list[selectedIdx].name, qty);
 
         printf("\n===================================\n");
-        printf("       PURCHASE SUCCESSFUL!        \n");
+        printf("        PURCHASE SUCCESSFUL!        \n");
         printf("===================================\n");
         printf("Item:             %s (x%d)\n", list[selectedIdx].name, qty);
         printf("Initial Money:    P%.2f\n", previousMoney);
@@ -344,9 +356,13 @@ buy_prompt:
         printf("Remaining Money:  P%.2f\n", studentMoney);
         printf("===================================\n");
         
-        printf("\nPress Enter to continue...");
+        printf("\nPress Enter to continue shopping in this store...");
         while (getchar() != '\n');
         getchar();
+        
+        // Dynamic cleanup and re-loop straight back to processing current store stock lists
+        free(list);
+        goto show_store_inventory;
     }
 
     free(list); 

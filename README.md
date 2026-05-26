@@ -1,1 +1,4 @@
-Cute ako
+rico = cute;
+shane = gwapo;
+renz = rico & shane;
+
